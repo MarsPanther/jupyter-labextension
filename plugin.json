@@ -1,0 +1,7 @@
+{
+  "title": "Main Menu Example",
+  "description": "Main Menu Example settings.",
+  "jupyter.lab.menus": {},
+  "additionalProperties": false,
+  "type": "object"
+}
