@@ -1,49 +1,70 @@
-import {
-  JupyterFrontEnd,
-  JupyterFrontEndPlugin
-} from '@jupyterlab/application';
+// src/menu-options.ts
 
+import { JupyterFrontEnd } from '@jupyterlab/application';
 import { ICommandPalette } from '@jupyterlab/apputils';
-import { IMainMenu } from '@jupyterlab/mainmenu';
 
-interface WebsiteLink {
-  label: string;
-  url: string;
+export const websiteLinks = [
+  { label: 'Google', url: 'https://www.google.com' },
+  { label: 'Facebook', url: 'https://www.facebook.com' },
+  { label: 'Twitter', url: 'https://www.twitter.com' }
+];
+
+export function addMenuOptions(app: JupyterFrontEnd, palette: ICommandPalette): void {
+  const { commands } = app;
+
+  websiteLinks.forEach(link => {
+    // Use template literal to format command ID
+    const commandId = `open-${link.label.toLowerCase().replace(' ', '-')}`;
+    commands.addCommand(commandId, {
+      label: `Open ${link.label}`,
+      execute: () => {
+        window.open(link.url, '_blank');
+      }
+    });
+    palette.addItem({ command: commandId, category: 'TDS' });
+  });
 }
 
-/**
- * Initialization data for the main menu example.
- */
-const extension: JupyterFrontEndPlugin<void> = {
-  id: '@jupyterlab-examples/main-menu:plugin',
-  description: 'Minimal JupyterLab example adding a menu.',
-  autoStart: true,
-  requires: [ICommandPalette, IMainMenu],
-  activate: (app: JupyterFrontEnd, palette: ICommandPalette, mainMenu: IMainMenu) => {
-    const { commands } = app;
 
-    // Define your website links
-    const websiteLinks: WebsiteLink[] = [
-      { label: 'Google', url: 'https://www.google.com' },
-      { label: 'Facebook', url: 'https://www.facebook.com' },
-      { label: 'Twitter', url: 'https://www.twitter.com' }
-    ];
-
-    // Create commands and add them to the command palette
-    websiteLinks.forEach((link) => {
-      const commandId = `open-${link.label.toLowerCase()}`; // Dynamic command IDs
-      commands.addCommand(commandId, {
-        label: link.label,
-        execute: () => {
-          window.open(link.url, '_blank');
-        }
-      });
-
-      // palette.addItem({ command: commandId, category: 'Extension Examples' });
-      // Add items to the Help menu with rank 0
-      mainMenu.helpMenu.addGroup([{ command: commandId }], 0);
-    });
+{
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-tds-menu",
+        "label": "TDS",
+        "rank": 90,
+        "items": [
+          // Items will be dynamically added by the extension code
+        ]
+      }
+    ]
   }
-};
+}
 
-export default extension;
+
+
+// src/menu-options.ts
+
+import { JupyterFrontEnd } from '@jupyterlab/application';
+import { ICommandPalette } from '@jupyterlab/apputils';
+
+export const websiteLinks = [
+  { label: 'Google', url: 'https://www.google.com' },
+  { label: 'Facebook', url: 'https://www.facebook.com' },
+  { label: 'Twitter', url: 'https://www.twitter.com' }
+];
+
+export function addMenuOptions(app: JupyterFrontEnd, palette: ICommandPalette): void {
+  const { commands } = app;
+
+  websiteLinks.forEach(link => {
+    const command = `jlab-examples:open-${link.label}`;
+    commands.addCommand(command, {
+      label: `Open ${link.label}`,
+      execute: () => {
+        window.open(link.url, '_blank');
+      }
+    });
+    palette.addItem({ command, category: 'TDS' });
+  });
+}
