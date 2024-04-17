@@ -43,28 +43,19 @@ export function addMenuOptions(app: JupyterFrontEnd, palette: ICommandPalette): 
 
 
 
-// src/menu-options.ts
+// src/index.ts
 
-import { JupyterFrontEnd } from '@jupyterlab/application';
+import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { ICommandPalette } from '@jupyterlab/apputils';
+import { addMenuOptions } from './menu-options';
 
-export const websiteLinks = [
-  { label: 'Google', url: 'https://www.google.com' },
-  { label: 'Facebook', url: 'https://www.facebook.com' },
-  { label: 'Twitter', url: 'https://www.twitter.com' }
-];
+const extension: JupyterFrontEndPlugin<void> = {
+  id: 'jlab-examples',
+  autoStart: true,
+  requires: [ICommandPalette],
+  activate: (app: JupyterFrontEnd, palette: ICommandPalette) => {
+    addMenuOptions(app, palette);
+  }
+};
 
-export function addMenuOptions(app: JupyterFrontEnd, palette: ICommandPalette): void {
-  const { commands } = app;
-
-  websiteLinks.forEach(link => {
-    const command = `jlab-examples:open-${link.label}`;
-    commands.addCommand(command, {
-      label: `Open ${link.label}`,
-      execute: () => {
-        window.open(link.url, '_blank');
-      }
-    });
-    palette.addItem({ command, category: 'TDS' });
-  });
-}
+export default extension;
