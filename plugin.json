@@ -1,7 +1,38 @@
-{
-  "title": "Main Menu Example",
-  "description": "Main Menu Example settings.",
-  "jupyter.lab.menus": {},
-  "additionalProperties": false,
-  "type": "object"
-}
+import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
+import { ICommandPalette } from '@jupyterlab/apputils';
+import { ILauncher } from '@jupyterlab/launcher';
+import { IMainMenu } from '@jupyterlab/mainmenu';
+import { Menu } from '@lumino/widgets';
+
+// Your links array
+export const websiteLinks: WebsiteLink[] = [
+    { label: 'Google', url: 'https://www.google.com' },
+    { label: 'Facebook', url: 'https://www.facebook.com' },
+    { label: 'Twitter', url: 'https://www.twitter.com' }
+];
+
+const extension: JupyterFrontEndPlugin<void> = {
+  id: 'extra-links-extension',
+  autoStart: true,
+  requires: [ICommandPalette, ILauncher, IMainMenu],
+  activate: (app: JupyterFrontEnd, palette: ICommandPalette, launcher: ILauncher, mainMenu: IMainMenu) => {
+    // Create the Menu
+     const menu = new Menu({ commands: palette });
+     menu.title.label = 'Extra Links';
+     mainMenu.addMenu(menu);
+
+     // Add Links to the Menu
+     websiteLinks.forEach(link => {
+         const command = `open:link:${link.label}`;
+         palette.addItem({ command, category: 'Extra Links' });
+         app.commands.addCommand(command, {
+             label: link.label,
+             execute: () => {
+                 window.open(link.url, '_blank');
+             }
+         });
+     });
+  }
+};
+
+export default extension;
