@@ -4,7 +4,8 @@ import {
 } from '@jupyterlab/application';
 
 import {
-  ICommandPalette
+  ICommandPalette,
+  CommandRegistry
 } from '@jupyterlab/apputils';
 
 import { Menu } from '@lumino/widgets';
@@ -22,8 +23,8 @@ function openURL(url: string) {
 }
 
 // Function to create the "Extra Links" menu
-function createExtraLinksMenu(): Menu {
-  const menu = new Menu({ commands: {} });
+function createExtraLinksMenu(commands: CommandRegistry): Menu {
+  const menu = new Menu({ commands });
   menu.title.label = 'Extra Links';
 
   websiteLinks.forEach(link => {
@@ -44,8 +45,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [ICommandPalette],
   activate: (app: JupyterFrontEnd, palette: ICommandPalette) => {
+    const { commands } = app;
+    
     // Add the "Extra Links" menu to the main menu bar
-    const extraLinksMenu = createExtraLinksMenu();
+    const extraLinksMenu = createExtraLinksMenu(commands);
     app.shell.add(extraLinksMenu, 'menu');
 
     // Add commands to the command palette for each link
